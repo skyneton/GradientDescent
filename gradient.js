@@ -32,8 +32,8 @@ const Gradient = () => {
 
     let work;
 
-    const Friction = .8;
-    const Gravity = .9;
+    const Friction = .09;
+    const Gravity = .5;
 
     let isStart = false;
 
@@ -68,8 +68,6 @@ const Gradient = () => {
             currentPos.y = this.func(currentPos.x);
             gradientPosList.push({x: currentPos.x, y: currentPos.y});
 
-            console.log(currentPos.x);
-
             const firstDer = this.derivative(currentPos.x);
             if(Math.abs(firstDer) < 1) {
                 movement = firstDer < 0 ? 10 : -10;
@@ -77,18 +75,23 @@ const Gradient = () => {
 
             work = setInterval(() => {
                 movement -= this.derivative(currentPos.x) * Gravity;
-                movement *= Friction;
+                movement -= movement * Friction;
                 let speed = movement;
                 if(Math.abs(movement) > MaxSpeed)
                 speed = movement < 0 ? -MaxSpeed : MaxSpeed;
-
+                    
+                
                 currentPos.x += speed;
+                // if(stopCount > 20) {
+                //     currentPos.x = currentPos.x < 0 ? Math.ceil(currentPos.x) : Math.floor(currentPos.x);
+                // }
+                
                 currentPos.y = this.func(currentPos.x);
                 gradientPosList.push({x: currentPos.x, y: currentPos.y});
 
                 this.canvasUpdate();
 
-                if(Math.abs(movement) <= .00001) {
+                if(Math.abs(movement) <= .0001) {
                     clearInterval(work);
                 }
             }, 80);
@@ -193,8 +196,12 @@ const Gradient = () => {
         //     return Math.pow(x, 2) / 9 - 30;
         // }
 
+        // func(x) {
+        //     return Math.pow(x / 55, 6) + Math.pow(x, 4) / 550 - Math.pow(x, 3) / 30 - Math.pow(x, 2) / 80 + x * 3 - 10;
+        // }
+
         func(x) {
-            return Math.pow(x / 55, 6) + Math.pow(x, 4) / 550 - Math.pow(x, 3) / 30 - Math.pow(x, 2) / 80 + x * 3 - 10;
+            return Math.abs(x) - 15;
         }
 
         get posX() {
